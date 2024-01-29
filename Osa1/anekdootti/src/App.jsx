@@ -42,7 +42,8 @@ const App = () => {
   const points = new Array(8).fill(0)
    
   function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+    console.log(Math.floor(Math.random() * max))
+    return Math.floor(Math.random() * max)
   }
 
   const [selected, setSelected] = useState(0)
@@ -70,6 +71,7 @@ const App = () => {
       <Button handleClick= {() => handleVoteClick()} text="vote"/>
       <Header header="Anecdote with most votes"/>
       <Anecdote text= {anecdotes[point.indexOf(Math.max(...point))]} points={Math.max.apply(Math, point)}/>
+      console.log(Math.max(...point))
     </div>
   )
 }

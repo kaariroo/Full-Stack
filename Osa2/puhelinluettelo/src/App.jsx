@@ -34,14 +34,16 @@ const PersonForm = (props) => {
   )
 }
 
-const AllPersons = (props) => {
-  return(
+
+const AllPersons = ({persons, del}) => {
+  return (
     <ul>
-      {props.persons.map(person =>
+      {persons.map(person =>
         <li key={person.name}>
-          <Person name={person.name} number={person.number} id={person.id} del={props.del}/>
-        </li>)}
-      </ul>
+          <Person name={person.name} number={person.number} id={person.id} del={del}/>
+        </li>
+        )}
+    </ul>
   )
 }
 
@@ -61,9 +63,11 @@ const Notification = ({ message }) => {
     return null
   }
 
+  const notificationStyle = message.type ==='error' ? 'alert' : 'notification';
+
   return (
-    <div className="alert">
-      {message}
+    <div className={notificationStyle}>
+      {message.text}
     </div>
   )
 }
@@ -84,9 +88,10 @@ const App = () => {
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
+        console.log(persons)
+        console.log(response.data)
       })
   }, [])
-  console.log('render', persons.length, 'persons')
 
   const deleteName = (id, name) => {
     console.log(id, name)
@@ -97,7 +102,7 @@ const App = () => {
         confirm(`Delete ${name}`)
           ? (setPersons(persons.filter((person) => person.id != id)),
             setAlertMessage(
-              `Person '${name}' was successfully removed from server`
+              { text: `Person '${name}' was successfully removed from server`, type: 'notification' }
             ),
             setTimeout(() => {
               setAlertMessage(null)
@@ -122,7 +127,7 @@ const App = () => {
             .replace(nameObject, oldperson.id)
             .catch(error => {
               setAlertMessage(
-                `Information of '${oldperson.name}' has already been removed from server`
+                { text: `Information of '${oldperson.name}' has already been removed from server`, type: 'alert' }
               ),
               setPersons(persons.filter(n => n.id !== oldperson.id))
             })
@@ -134,14 +139,14 @@ const App = () => {
               setPersons(persons.concat(response.data))
               } 
               setAlertMessage(
-                `Person '${newName}''s number was successfully changed to server`
+                { text: `Person '${newName}''s number was successfully changed to server`, type: 'notification' }
               ),
               setTimeout(() => {
                 setAlertMessage(null)
               }, 5000)
             })
           : setAlertMessage(
-            `Person '${newName}'' is already in phonebook`
+            { text: `Person '${newName}'' is already in phonebook`, type: 'notification' }
           ),
           setTimeout(() => {
             setAlertMessage(null)
@@ -151,21 +156,32 @@ const App = () => {
     else {
       personService
         .create(nameObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-      console.log(response)
-      console.log(persons)
-    })
+        .then(returnedPerson => {
+          const updated = persons.concat(returnedPerson.data)
+          setPersons(updated)
+          setNewName("")
+          setNewNumber("")
+          console.log("button clicked", event.target)
+          console.log(returnedPerson.data)
+          console.log(returnedPerson.name)
+          console.log("tästä tulee error")
+          setAlertMessage(
+            { text: `Person '${newName}' was successfully added to server`, type: 'notification' }
+          ),
+          setTimeout(() => {
+            setAlertMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          console.log(error)
+          setAlertMessage(
+            { text: `${error.response.data.error}`, type: 'error' }
+            )
+          setTimeout(() => {
+          setAlertMessage(null)
+          }, 5000)
+        })
     }
-    setNewName("")
-    setNewNumber("")
-    console.log("button clicked", event.target)
-    setAlertMessage(
-      `Person '${newName}' was successfully added to server`
-    ),
-    setTimeout(() => {
-      setAlertMessage(null)
-    }, 5000)
   }
 
   const handleNameChange = (event) => {
@@ -182,7 +198,12 @@ const App = () => {
     console.log(event.target.value)
     setNewFilter(event.target.value)
   }
-  
+
+  const personsToShow = persons.filter(person => 
+    person.name.includes(newFilter))
+
+
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -191,7 +212,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm submitname={addName} name={newName} onchange={handleNameChange} phonenumber={newNumber} numberchange={handleNumberChange}/>
       <h2>Numbers</h2>
-      <AllPersons persons={persons.filter(person => person.name.includes(newFilter))} del={deleteName}/>
+      <AllPersons persons={personsToShow} del={deleteName}/>
     </div>
   )
 

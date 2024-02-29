@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Postaaminen toimii eikö?",
+    "author": "Roope2990",
+    "url": "www.fi",
+    "likes": 10
+}

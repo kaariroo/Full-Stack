@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/65cf49bfdab3f5416a3d9862
+Content-Type: application/json
+
+{
+    "title": "Testi muokkaamiseen restistä",
+    "author": "Roope",
+    "url": "www.fi",
+    "likes": 7
+}

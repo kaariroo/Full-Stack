@@ -1,0 +1,3 @@
+[submodule "Osa6/Osa6/query-anecdotes"]
+	path = Osa6/Osa6/query-anecdotes
+	url = https://github.com/kaariroo/Full-Stack

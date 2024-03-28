@@ -1,0 +1,56 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createAnecdote } from '../requests'
+import { useContext } from 'react'
+import NotificationContext from '../NotificationContext'
+
+
+
+const AnecdoteForm = () => {
+
+  const [notificationt, dispatch] = useContext(NotificationContext)
+
+  const queryClient = useQueryClient()
+
+  const newAnecdoteMutation = useMutation({
+    mutationFn: createAnecdote, 
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
+    },
+    onError: () => {
+      dispatch({
+        type: 'SHOW_NOTIFICATION',
+        payload: 'Anecdote must be at least 5 characters long',
+      })
+      setTimeout(() => {
+        dispatch({ type: 'HIDE_NOTIFICATION' })
+      }, 5000)
+    },
+    retry: false
+  })
+    
+  const addAnecdote = async (event) => {
+    event.preventDefault()
+    const content = event.target.anecdote.value
+    event.target.anecdote.value = ''
+    newAnecdoteMutation.mutate({ content, votes: 0 })
+    dispatch({
+      type: 'SHOW_NOTIFICATION',
+      payload: `Anecdote '${content}' succesfully created`,
+    })
+    setTimeout(() => {
+      dispatch({ type: 'HIDE_NOTIFICATION' })
+    }, 5000)
+  }
+
+  return (
+    <div>
+      <h3>create new</h3>
+      <form onSubmit={addAnecdote}>
+        <input name='anecdote' />
+        <button type="submit">create</button>
+      </form>
+    </div>
+  )
+}
+
+export default AnecdoteForm

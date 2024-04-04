@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3BlIiwiaWQiOiI2NWUxYTE4MGJhNjZmNjk1YTJlYTg5OGEiLCJpYXQiOjE3MDkyOTMzMjF9.CL4arbsoS5D-z2oJtVZbfzs3dFTy1njzgCYGdz9exv4
+
+{
+    "title": "toimiiko userextractor",
+    "author": "Roope2990",
+    "url": "www.fi",
+    "likes": 10,
+    "userId": "65e1a180ba66f695a2ea898a"
+}
